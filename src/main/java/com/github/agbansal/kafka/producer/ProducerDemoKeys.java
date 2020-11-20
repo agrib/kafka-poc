@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-public class ProducerDemo {
+public class ProducerDemoKeys {
+    private static final Logger logger = LoggerFactory.getLogger(ProducerDemoKeys.class);
+
     public static void main(String[] args) {
         //System.out.println("hello world");
-
-        final Logger logger = LoggerFactory.getLogger(ProducerDemo.class);
 
         String bootstrapServers = "127.0.0.1:9092";
 
@@ -26,8 +26,11 @@ public class ProducerDemo {
 
         for (int i = 0; i < 10; i++) {
             //create a producer record
-            final ProducerRecord<String, String> record = new ProducerRecord<String, String>("first_topic", "hello_world" + Integer.toString(i));
 
+            String topic = "first_topic";
+            String value = "hello_world " + Integer.toString(i);
+            String key = "id_" + Integer.toString(i);
+            final ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, value, key);
 
             //send data - asynchronous
             producer.send(record, new Callback() {
@@ -35,7 +38,7 @@ public class ProducerDemo {
                     // executes every time a record is successfully sent or an exception is thrown
                     if (e == null) {
                         // the record was successfully sent
-                        logger.info("Recieved new metadata. \n" +
+                        logger.info("Received new metadata. \n" +
                                 "Topic:" + recordMetadata.topic() + "\n" +
                                 "Partition:" + recordMetadata.partition());
                     } else {
